@@ -20,11 +20,40 @@ const sequence = [
 ];
 const browser = mdns.createBrowser(mdns.tcp('googlecast'), {resolverSequence: sequence});
 
-// DEV: apiConfig from initialize
+// DEV: Global config variables
 let globalApiConfig;
+let receiverList = [];
+
+browser.on('serviceUp', (service) => {
+  receiverList.push(service);
+  /**
+  Service object
+  {
+    interfaceIndex: 4,
+    name: 'somehost',
+    networkInterface: 'en0',
+    type: {name: 'http', protocol: 'tcp', subtypes: []},
+    replyDomain: 'local.',
+    fullname: 'somehost._http._tcp.local.',
+    host: 'somehost.local.',
+    port: 4321,
+    addresses: [ '10.1.1.50', 'fe80::21f:5bff:fecd:ce64' ]
+  }
+  **/
+  // DEV: Notify listeners that we found cast devices
+  if (globalApiConfig) globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.AVAILABLE);
+});
+
+browser.on('serviceDown', (service) => {
+  receiverList = receiverList.filter((receiver) => {
+    return receiver.host !== service.host && receiver.name !== service.name && receiver.port !== service.port;
+  });
+  // DEV: If we have run out of receivers, notify listeners that there are none available
+  if (receiverList.length === 0) globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.UNAVAILABLE);
+});
+browser.start();
 
 export default class Cast {
-
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.AutoJoinPolicy
   static AutoJoinPolicy = {
     TAB_AND_ORIGIN_SCOPED: 'TAB_AND_ORIGIN_SCOPED',
@@ -107,24 +136,21 @@ export default class Cast {
     console.log(listener);
   }
 
+  // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.initialize
   static initialize = (apiConfig, successCallback, errorCallback) => {
-    console.log(apiConfig);
-    // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.initialize
+    if (globalApiConfig) {
+      // DEV: The chromecast API has already been initialzed
+      errorCallback(chrome.cast.Error.INVALID_PARAMETER);
+      return;
+    }
     globalApiConfig = apiConfig;
 
-    browser.on('serviceUp', (service) => {
-      // TODO: Flush and update receiverList with new Receiver objects based on scan.
-      console.log(service);
-      // service.name = device name
-      // service.address[0] = IP address
-      // service.port = port
-
-      // DEV: Notify listeners that we found cast devices
-      apiConfig.receiverListener(chrome.cast.ReceiverAvailability.AVAILABLE);
-      // DEV: Stop scanning.
-      browser.stop();
-    });
-    browser.start();
+    if (receiverList.length > 0) {
+      globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.AVAILABLE);
+    } else {
+      globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.UNAVAILABLE);
+    }
+    successCallback();
   }
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.logMessage
