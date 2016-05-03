@@ -8,7 +8,23 @@ import Session from './_Classes/Session';
 import SessionRequest from './_Classes/SessionRequest';
 import Volume from './_Classes/Volume';
 
+const mdns = require('mdns');
+
+// DEV: workaround for RPi (and apparently Ubuntu)
+// https://github.com/agnat/node_mdns/issues/130#issuecomment-120731155
+
+const sequence = [
+  mdns.rst.DNSServiceResolve(),
+  'DNSServiceGetAddrInfo' in mdns.dns_sd ? mdns.rst.DNSServiceGetAddrInfo() : mdns.rst.getaddrinfo({families:[0]}),
+  mdns.rst.makeAddressesUnique()
+];
+const browser = mdns.createBrowser(mdns.tcp('googlecast'), {resolverSequence: sequence});
+
+// DEV: apiConfig from initialize
+let globalApiConfig;
+
 export default class Cast {
+
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.AutoJoinPolicy
   static AutoJoinPolicy = {
     TAB_AND_ORIGIN_SCOPED: 'TAB_AND_ORIGIN_SCOPED',
@@ -88,10 +104,27 @@ export default class Cast {
 
   static addReceiverActionListener = (listener) => {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.html#.addReceiverActionListener
+    console.log(listener);
   }
 
   static initialize = (apiConfig, successCallback, errorCallback) => {
+    console.log(apiConfig);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.initialize
+    globalApiConfig = apiConfig;
+
+    browser.on('serviceUp', (service) => {
+      // TODO: Flush and update receiverList with new Receiver objects based on scan.
+      console.log(service);
+      // service.name = device name
+      // service.address[0] = IP address
+      // service.port = port
+
+      // DEV: Notify listeners that we found cast devices
+      apiConfig.receiverListener(chrome.cast.ReceiverAvailability.AVAILABLE);
+      // DEV: Stop scanning.
+      browser.stop();
+    });
+    browser.start();
   }
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.logMessage
@@ -101,22 +134,30 @@ export default class Cast {
 
   static removeReceiverActionListener = (listener) => {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.removeReceiverActionListener
+    console.log(listener);
   }
 
   static requestSession = (successCallback, errorCallback, opt_sessionRequest) => {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.requestSession
+    console.log(successCallback, errorCallback, opt_sessionRequest);
+
+    // TODO: Figure out how the sessionId is generated as well as appImages.
+    // return new chrome.cast.Session(sessionId, gloalApiConfig.appId, displayName, appImages, receiver);
   }
 
   static requestSessionById = (sessionId) => {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.requestSessionById
+    console.log(sessionId);
   }
 
   static setCustomReceivers = (receivers, successCallback, errorCallback) => {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.setCustomReceivers
+    console.log(receivers, successCallback, errorCallback);
   }
 
   static setReceiverDisplayStatus = (receiver, successCallback, errorCallback) => {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.setReceiverDisplayStatus
+    console.log(receiver, successCallback, errorCallback);
   }
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.unescape

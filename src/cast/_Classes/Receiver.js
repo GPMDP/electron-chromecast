@@ -9,5 +9,9 @@ export default class Receiver {
     this.volume = opt_volume;
 
     this.receiverType = chrome.cast.ReceiverType.CAST;
+
+    // DEV: Properties not in spec but in crx
+    this.ipAddress = null;
+    this.isActiveInput = null;
   }
 }
