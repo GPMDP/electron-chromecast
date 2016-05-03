@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "An implementation of the chrome.cast API in electron",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "castv2-client": "^1.1.1",
+    "mdns": "^2.3.2"
+  },
   "devDependencies": {
     "babel-eslint": "^6.0.4",
     "babel-plugin-transform-class-properties": "^6.6.0",
