@@ -25,6 +25,7 @@ const browser = mdns.createBrowser(mdns.tcp('googlecast'), { resolverSequence: s
 // DEV: Global config variables
 let globalApiConfig;
 let receiverList = [];
+let sessions = [];
 
 browser.on('serviceUp', (service) => {
   receiverList.push(service);
@@ -142,7 +143,7 @@ export default class Cast {
   static initialize = (apiConfig, successCallback, errorCallback) => {
     if (globalApiConfig) {
       // DEV: The chromecast API has already been initialzed
-      errorCallback(chrome.cast.Error.INVALID_PARAMETER);
+      errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.INVALID_PARAMETER));
       return;
     }
     globalApiConfig = apiConfig;
@@ -165,12 +166,28 @@ export default class Cast {
     console.log(listener);
   }
 
+  // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.requestSession
   static requestSession = (successCallback, errorCallback, opt_sessionRequest) => {
-    // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.requestSession
-    console.log(successCallback, errorCallback, opt_sessionRequest);
+    const id = sessions.length;
 
-    // TODO: Figure out how the sessionId is generated as well as appImages.
-    // return new chrome.cast.Session(sessionId, gloalApiConfig.appId, displayName, appImages, receiver);
+    if (receiverList.length === 0) {
+      errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.RECEIVER_UNAVAILABLE));
+    } else {
+      global.requestHandler(receiverList)
+        .then((chosenDevice) => {
+          const session = new chrome.cast.Session(
+            id,
+            globalApiConfig.appId,
+            chosenDevice.name,
+            [],
+            new chrome.cast.Receiver(chosenDevice.fullname, chosenDevice.name)
+          );
+          sessions.push(session);
+          successCallback(session);
+        })
+        .catch(() => errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.CANCEL)));
+    }
+    // TODO: Figure out where appImages and displayName come from (I think they come from the actual service)
   }
 
   static requestSessionById = (sessionId) => {
