@@ -5,7 +5,7 @@ export default class ApiConfig {
     this.sessionRequest = sessionRequest;
     this.sessionListener = sessionListener;
     this.receiverListener = receiverListener;
-    this.autoJoinPolicy = opt_autoJoinPolicy;
-    this.defaultActionPolicy = opt_defaultActionPolicy;
+    this.autoJoinPolicy = opt_autoJoinPolicy || chrome.cast.AutoJoinPolicy.TAB_AND_ORIGIN_SCOPED;
+    this.defaultActionPolicy = opt_defaultActionPolicy || chrome.cast.DefaultActionPolicy.CREATE_SESSION;
   }
 }
