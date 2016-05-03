@@ -2,7 +2,7 @@
   "name": "electron-chromecast",
   "version": "1.0.0",
   "description": "An implementation of the chrome.cast API in electron",
-  "main": "index.js",
+  "main": "build/index.js",
   "dependencies": {
     "castv2-client": "^1.1.1",
     "mdns": "^2.3.2"
