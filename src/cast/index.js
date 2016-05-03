@@ -133,3 +133,7 @@ Cast.SenderApplication = SenderApplication;
 Cast.Session = Session;
 Cast.SessionRequest = SessionRequest;
 Cast.Volume = Volume;
+
+// Extensions
+Cast.media = {};
+Cast.timeout = {};
