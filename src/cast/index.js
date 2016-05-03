@@ -8,17 +8,19 @@ import Session from './_Classes/Session';
 import SessionRequest from './_Classes/SessionRequest';
 import Volume from './_Classes/Volume';
 
-const mdns = require('mdns');
+import Media from './media';
+
+import mdns from 'mdns';
 
 // DEV: workaround for RPi (and apparently Ubuntu)
 // https://github.com/agnat/node_mdns/issues/130#issuecomment-120731155
 
 const sequence = [
-  mdns.rst.DNSServiceResolve(),
-  'DNSServiceGetAddrInfo' in mdns.dns_sd ? mdns.rst.DNSServiceGetAddrInfo() : mdns.rst.getaddrinfo({families:[0]}),
-  mdns.rst.makeAddressesUnique()
+  mdns.rst.DNSServiceResolve(), // eslint-disable-line
+  'DNSServiceGetAddrInfo' in mdns.dns_sd ? mdns.rst.DNSServiceGetAddrInfo() : mdns.rst.getaddrinfo({ families: [0] }), // eslint-disable-line
+  mdns.rst.makeAddressesUnique(),
 ];
-const browser = mdns.createBrowser(mdns.tcp('googlecast'), {resolverSequence: sequence});
+const browser = mdns.createBrowser(mdns.tcp('googlecast'), { resolverSequence: sequence });
 
 // DEV: Global config variables
 let globalApiConfig;
@@ -45,9 +47,9 @@ browser.on('serviceUp', (service) => {
 });
 
 browser.on('serviceDown', (service) => {
-  receiverList = receiverList.filter((receiver) => {
-    return receiver.host !== service.host && receiver.name !== service.name && receiver.port !== service.port;
-  });
+  receiverList = receiverList.filter((receiver) =>
+    receiver.host !== service.host && receiver.name !== service.name && receiver.port !== service.port
+  );
   // DEV: If we have run out of receivers, notify listeners that there are none available
   if (receiverList.length === 0) globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.UNAVAILABLE);
 });
@@ -202,5 +204,5 @@ Cast.SessionRequest = SessionRequest;
 Cast.Volume = Volume;
 
 // Extensions
-Cast.media = {};
+Cast.media = Media;
 Cast.timeout = {};
