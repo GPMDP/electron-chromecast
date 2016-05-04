@@ -25,7 +25,7 @@ const browser = mdns.createBrowser(mdns.tcp('googlecast'), { resolverSequence: s
 // DEV: Global config variables
 let globalApiConfig;
 let receiverList = [];
-let sessions = [];
+const sessions = [];
 
 browser.on('serviceUp', (service) => {
   receiverList.push(service);
@@ -153,6 +153,7 @@ export default class Cast {
     } else {
       globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.UNAVAILABLE);
     }
+    globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.AVAILABLE);
     successCallback();
   }
 
@@ -177,13 +178,14 @@ export default class Cast {
         .then((chosenDevice) => {
           const session = new chrome.cast.Session(
             id,
-            globalApiConfig.appId,
+            globalApiConfig.sessionRequest.appId,
             chosenDevice.name,
             [],
-            new chrome.cast.Receiver(chosenDevice.fullname, chosenDevice.name)
+            new chrome.cast.Receiver(chosenDevice.fullname, chosenDevice.name),
+            chosenDevice,
+            successCallback
           );
           sessions.push(session);
-          successCallback(session);
         })
         .catch(() => errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.CANCEL)));
     }
