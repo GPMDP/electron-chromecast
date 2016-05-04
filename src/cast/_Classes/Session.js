@@ -9,6 +9,7 @@ export default class Session {
       // create various namespace handlers
       const clientConnection = this.client.createChannel('sender-0', 'receiver-0', 'urn:x-cast:com.google.cast.tp.connection', 'JSON');
       const clientHeartbeat = this.client.createChannel('sender-0', 'receiver-0', 'urn:x-cast:com.google.cast.tp.heartbeat', 'JSON');
+      let transportHeartbeat;
       const clientReceiver = this.client.createChannel('sender-0', 'receiver-0', 'urn:x-cast:com.google.cast.receiver', 'JSON');
 
       // establish virtual connection to the receiver
@@ -17,6 +18,9 @@ export default class Session {
       // start heartbeating
       clientHeartbeat.send({ type: 'PING' });
       setInterval(() => {
+        if (transportHeartbeat) {
+          transportHeartbeat.send({ type: 'PING' });
+        }
         clientHeartbeat.send({ type: 'PING' });
       }, 5000);
 
@@ -30,10 +34,23 @@ export default class Session {
         if (data.type === 'RECEIVER_STATUS') {
           if (data.status.applications && data.status.applications[0].appId === appId) {
             const app = data.status.applications[0];
+            this.app = app;
             if (once) {
               once = false;
               this.transport = app.transportId;
+              this.clientId = `client-${Math.floor(Math.random() * 10e5)}`;
+              this.transportConnect = this.client.createChannel(this.clientId, this.transport, 'urn:x-cast:com.google.cast.tp.connection', 'JSON');
+              this.transportConnect.send({ type: 'CONNECT' });
+              transportHeartbeat = this.client.createChannel(this.clientId, this.transport, 'urn:x-cast:com.google.cast.tp.heartbeat', 'JSON');
               this.status = chrome.cast.SessionStatus.CONNECTED;
+
+              // DEV: Media Listener
+              // TODO: Move somewhere nicer
+              this.addMessageListener('urn:x-cast:com.google.cast.media', (namespace, media) => {
+                console.info('Media Reciever', media);
+                const mediaObject = new chrome.cast.media.Media(this.app.sessionId, media.requestId);
+                this._mediaHooks.forEach((hookFn) => hookFn(mediaObject));
+              });
               _cb(this);
             }
 
@@ -70,11 +87,13 @@ export default class Session {
     this._mediaHooks = [];
     this._channels = {};
     this._updateHooks = [];
+
+    this.sequenceNumber = 0;
   }
 
   _createChannel(namespace) {
     if (!this._channels[namespace]) {
-      this._channels[namespace] = this.client.createChannel(this.transport, 'receiver-0', namespace, 'JSON');
+      this._channels[namespace] = this.client.createChannel(this.clientId, this.transport, namespace, 'JSON');
       this._channels[namespace].on('message', (message) => {
         console.info('Message on:', namespace, message);
       });
@@ -88,7 +107,9 @@ export default class Session {
 
   addMessageListener(namespace, listener) {
     this._createChannel(namespace);
-    this._channels[namespace].on('message', listener);
+    this._channels[namespace].on('message', (data) => {
+      listener(namespace, JSON.stringify(data));
+    });
     console.info('Message Hook For: ', namespace);
   }
 
@@ -133,6 +154,17 @@ export default class Session {
     console.info('Sending Message', namespace, message);
     this._createChannel(namespace);
     try {
+      // this._channels[namespace].send({
+      //   type: 'app_message',
+      //   message: {
+      //     sessionId: this.app.sessionId,
+      //     namespaceName: namespace,
+      //     message,
+      //   },
+      //   timeoutMillis: 3000,
+      //   sequenceNumber: ++this.sequenceNumber,
+      //   clientId: this.clientId,
+      // });
       this._channels[namespace].send(message);
     } catch (e) {
       errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.SESSION_ERROR));

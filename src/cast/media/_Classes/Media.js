@@ -25,6 +25,7 @@ export default class Media {
   }
 
   addUpdateListener(listener) {
+    console.warn('Add update listener');
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#addUpdateListener
     console.info('addUpdateListener', listener);
   }
