@@ -2,6 +2,7 @@
 
 export default class GetStatusRequest {
   constructor() {
+    console.info('GetStatusRequest');
     this.customData = {};
   }
 }

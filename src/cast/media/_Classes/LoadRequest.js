@@ -2,6 +2,7 @@
 
 export default class LoadRequest {
   constructor(mediaInfo) {
+    console.info('mediaInfo', mediaInfo);
     this.activeTrackIds = [];
     this.autoplay = false;
     this.currentTime = 0;
