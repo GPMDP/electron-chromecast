@@ -3,34 +3,38 @@ import { Client } from 'castv2';
 
 export default class Session {
   constructor(sessionId, appId, displayName, appImages, receiver, _cb) {
+    this.clientConnection = null;
+    this.clientHeartbeat = null;
+    this.clientReceiver = null;
+
     this.client = new Client();
     this.client.on('message', console.warn.bind(console));
     this.client.connect(receiver.ipAddress, () => {
-      // create various namespace handlers
-      const clientConnection = this.client.createChannel('sender-0', 'receiver-0', 'urn:x-cast:com.google.cast.tp.connection', 'JSON');
-      const clientHeartbeat = this.client.createChannel('sender-0', 'receiver-0', 'urn:x-cast:com.google.cast.tp.heartbeat', 'JSON');
       let transportHeartbeat;
-      const clientReceiver = this.client.createChannel('sender-0', 'receiver-0', 'urn:x-cast:com.google.cast.receiver', 'JSON');
+      // create various namespace handlers
+      this.clientConnection = this.client.createChannel('sender-0', 'receiver-0', 'urn:x-cast:com.google.cast.tp.connection', 'JSON');
+      this.clientHeartbeat = this.client.createChannel('sender-0', 'receiver-0', 'urn:x-cast:com.google.cast.tp.heartbeat', 'JSON');
+      this.clientReceiver = this.client.createChannel('sender-0', 'receiver-0', 'urn:x-cast:com.google.cast.receiver', 'JSON');
 
       // establish virtual connection to the receiver
-      clientConnection.send({ type: 'CONNECT' });
+      this.clientConnection.send({ type: 'CONNECT' });
 
       // start heartbeating
-      clientHeartbeat.send({ type: 'PING' });
+      this.clientHeartbeat.send({ type: 'PING' });
       setInterval(() => {
         if (transportHeartbeat) {
           transportHeartbeat.send({ type: 'PING' });
         }
-        clientHeartbeat.send({ type: 'PING' });
+        this.clientHeartbeat.send({ type: 'PING' });
       }, 5000);
 
+      // launch appId
       console.info(`LAUNCHING: ${appId}`);
-      // launch YouTube app
-      clientReceiver.send({ type: 'LAUNCH', appId, requestId: 1 });
+      this.clientReceiver.send({ type: 'LAUNCH', appId, requestId: 1 });
 
       // display receiver status updates
       let once = true;
-      clientReceiver.on('message', (data, broadcast) => {
+      this.clientReceiver.on('message', (data, broadcast) => {
         if (data.type === 'RECEIVER_STATUS') {
           if (data.status.applications && data.status.applications[0].appId === appId) {
             const app = data.status.applications[0];
@@ -205,14 +209,29 @@ export default class Session {
   }
 
   setReceiverMuted(muted, successCallback, errorCallback) {
-    // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#setReceiverMuted
+    const data = {
+      type: 'SET_VOLUME',
+      volume: { muted: true },
+      requestId: 0,
+    };
+    this.clientReceiver.send(data);
   }
 
   setReceiverVolumeLevel(newLevel, successCallback, errorCallback) {
-    // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#setReceiverVolumeLevel
+    const data = {
+      type: 'SET_VOLUME',
+      volume: { level: newLevel },
+      requestId: 0,
+    };
+    this.clientReceiver.send(data);
   }
 
   stop(successCallback, errorCallback) {
-    // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#stop
+    const data = {
+      type: 'STOP',
+      sessionId: this.sessionId,
+      requestId: 0,
+    };
+    this.clientReceiver.send(data);
   }
 }
