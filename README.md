@@ -4,9 +4,6 @@
 An implementation of the chrome.cast API in electron
 
 ## TODO
-- [ ] All the TODO's in code
-- [ ] The `chrome.cast.media` API
-- [ ] The `chrome.cast.media.timeout` API
-- [ ] The `chrome.cast.timeout` API
+- [ ] All the TODO's in code (We only implemented the functionality required by Google Play Music, however this should be sufficient for MOST applications)
 
 **TODO *(But totally not needed)*:** The `chrome.cast.games` API
