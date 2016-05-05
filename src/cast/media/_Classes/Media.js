@@ -3,7 +3,7 @@
 export default class Media {
   constructor(sessionId, mediaSessionId) {
     this.activeTrackIds = [];
-    this.currentItemId = null;
+    this.currentItemId = 1;
     this.customData = {};
     this.idleReason = null;
     this.items = [];
@@ -11,7 +11,7 @@ export default class Media {
     this.media = null;
     this.mediaSessionId = mediaSessionId;
     this.playbackRate = 1;
-    this.playerState = chrome.cast.media.PlayerState.IDLE;
+    this.playerState = chrome.cast.media.PlayerState.PAUSED;
     this.preloadedItemId = null;
     this.repeatMode = chrome.cast.media.RepeatMode.OFF;
     this.sessionId = sessionId;
@@ -25,7 +25,6 @@ export default class Media {
   }
 
   addUpdateListener(listener) {
-    console.warn('Add update listener');
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#addUpdateListener
     console.info('addUpdateListener', listener);
   }

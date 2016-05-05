@@ -8,7 +8,7 @@ export default class MusicTrackMediaMetadata {
     this.composer = null;
     this.discNumber = null;
     this.images = [];
-    this.metadataType = null;
+    this.metadataType = this.type = 3;
     this.releaseDate = null;
     this.songName = null;
     this.title = null;

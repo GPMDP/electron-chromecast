@@ -37,19 +37,23 @@ export default class Session {
             this.app = app;
             if (once) {
               once = false;
-              this.transport = app.transportId;
+              this.transport = this.transportId = app.transportId;
               this.clientId = `client-${Math.floor(Math.random() * 10e5)}`;
               this.transportConnect = this.client.createChannel(this.clientId, this.transport, 'urn:x-cast:com.google.cast.tp.connection', 'JSON');
               this.transportConnect.send({ type: 'CONNECT' });
               transportHeartbeat = this.client.createChannel(this.clientId, this.transport, 'urn:x-cast:com.google.cast.tp.heartbeat', 'JSON');
               this.status = chrome.cast.SessionStatus.CONNECTED;
+              this.sessionId = app.sessionId;
+              this.namespaces = app.namespaces;
+              this.displayName = app.displayName;
+              this.statusText = app.displayName;
 
               // DEV: Media Listener
               // TODO: Move somewhere nicer
               this.addMessageListener('urn:x-cast:com.google.cast.media', (namespace, media) => {
                 console.info('Media Reciever', media);
-                const mediaObject = new chrome.cast.media.Media(this.app.sessionId, media.requestId);
-                this._mediaHooks.forEach((hookFn) => hookFn(mediaObject));
+                // const mediaObject = new chrome.cast.media.Media(this.app.sessionId, media.requestId);
+                // this._mediaHooks.forEach((hookFn) => hookFn(mediaObject));
               });
               _cb(this);
             }
@@ -108,6 +112,7 @@ export default class Session {
   addMessageListener(namespace, listener) {
     this._createChannel(namespace);
     this._channels[namespace].on('message', (data) => {
+      debugger;
       listener(namespace, JSON.stringify(data));
     });
     console.info('Message Hook For: ', namespace);
@@ -124,7 +129,17 @@ export default class Session {
   }
 
   loadMedia(loadRequest, successCallback, errorCallback) {
-    console.info('loadMedia', loadRequest);
+    this.sendMediaMessage({
+      type: 'LOAD',
+      requestId: 0,
+      media: loadRequest.media,
+      activeTrackIds: loadRequest.activeTrackIds || [],
+      autoplay: loadRequest.autoplay || false,
+      currentTime: loadRequest.currentTime || 0,
+      customData: loadRequest.customData || {},
+      repeatMode: 'REPEAT_OFF',
+    });
+    successCallback();
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#loadMedia
   }
 
@@ -147,6 +162,10 @@ export default class Session {
   removeUpdateListener(listener) {
     console.info('Remove Update Listener');
     this._updateHooks = this._updateHooks.filter((item) => item !== listener);
+  }
+
+  sendMediaMessage(message) {
+    this.sendMessage('urn:x-cast:com.google.cast.media', message, () => {}, () => {});
   }
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#sendMessage

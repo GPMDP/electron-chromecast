@@ -5,13 +5,13 @@ export default class Receiver {
     this.capabilities = opt_capabilities || [chrome.cast.Capability.VIDEO_OUT, chrome.cast.Capability.AUDIO_OUT];
     this.displayStatus = null;
     this.friendlyName = friendlyName;
-    this.label = label;
+    this.label = 'rENwhtXTIxoASoh7UJVV7twdiEEo';
     this.volume = opt_volume;
 
     this.receiverType = chrome.cast.ReceiverType.CAST;
 
     // DEV: Properties not in spec but in crx
     this.ipAddress = null;
-    this.isActiveInput = null;
+    this.isActiveInput = true;
   }
 }

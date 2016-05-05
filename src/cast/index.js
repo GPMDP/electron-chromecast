@@ -199,7 +199,7 @@ export default class Cast {
 
   static requestSessionById = (sessionId) => {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.requestSessionById
-    console.log(sessionId);
+    console.log('Get Session', sessionId);
   }
 
   static setCustomReceivers = (receivers, successCallback, errorCallback) => {
