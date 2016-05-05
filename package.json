@@ -4,7 +4,7 @@
   "description": "An implementation of the chrome.cast API in electron",
   "main": "build/index.js",
   "dependencies": {
-    "castv2": "^1.1.1",
+    "castv2": "^0.1.6",
     "mdns": "^2.3.2"
   },
   "devDependencies": {
