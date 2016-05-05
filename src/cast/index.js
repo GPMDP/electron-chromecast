@@ -160,7 +160,6 @@ export default class Cast {
     } else {
       globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.UNAVAILABLE);
     }
-    globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.AVAILABLE);
     successCallback();
   }
 
