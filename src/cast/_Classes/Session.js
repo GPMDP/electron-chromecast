@@ -51,9 +51,12 @@ export default class Session {
               // DEV: Media Listener
               // TODO: Move somewhere nicer
               this.addMessageListener('urn:x-cast:com.google.cast.media', (namespace, media) => {
-                console.info('Media Reciever', media);
-                // const mediaObject = new chrome.cast.media.Media(this.app.sessionId, media.requestId);
-                // this._mediaHooks.forEach((hookFn) => hookFn(mediaObject));
+                if (media.status && media.status.length > 0) {
+                  console.info('Media Reciever', media);
+                  console.error('Media Reciever', this._mediaHooks);
+                  // const mediaObject = new chrome.cast.media.Media(this.app.sessionId, media.requestId);
+                  // this._mediaHooks.forEach((hookFn) => hookFn(mediaObject));
+                }
               });
               _cb(this);
             }
@@ -112,7 +115,6 @@ export default class Session {
   addMessageListener(namespace, listener) {
     this._createChannel(namespace);
     this._channels[namespace].on('message', (data) => {
-      debugger;
       listener(namespace, JSON.stringify(data));
     });
     console.info('Message Hook For: ', namespace);
@@ -139,7 +141,17 @@ export default class Session {
       customData: loadRequest.customData || {},
       repeatMode: 'REPEAT_OFF',
     });
-    successCallback();
+    let once = true;
+    console.error('ADD LISTEN');
+    this.addMessageListener('urn:x-cast:com.google.cast.media', (namespace, data) => {
+      const mediaObject = JSON.parse(data);
+      if (once && mediaObject.status && mediaObject.status.length > 0) {
+        console.error('LISTEN FIRED');
+        once = false;
+        const media = new chrome.cast.media.Media(this.app.sessionId, mediaObject.status[0].mediaSessionId, this._channels['urn:x-cast:com.google.cast.media']);
+        successCallback(media);
+      }
+    });
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#loadMedia
   }
 

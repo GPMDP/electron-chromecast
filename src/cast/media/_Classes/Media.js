@@ -1,10 +1,11 @@
 // https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media
 
 export default class Media {
-  constructor(sessionId, mediaSessionId) {
+  constructor(sessionId, mediaSessionId, _channel) {
     this.activeTrackIds = [];
     this.currentItemId = 1;
     this.customData = {};
+    this.currentTime = 0;
     this.idleReason = null;
     this.items = [];
     this.loadingItemId = null;
@@ -22,11 +23,32 @@ export default class Media {
       chrome.cast.media.MediaCommand.STREAM_MUTE,
     ];
     this.volume = new chrome.cast.Volume();
+
+    this.channel = _channel;
+    this.channel.on('message', (data) => {
+      if (data && data.type === 'MEDIA_STATUS' && data.status && data.status.length > 0) {
+        console.error('Update MEDIA based on:', data);
+        const status = data.status[0];
+        this.currentTime = status.currentTime;
+        this.customData = status.customData;
+        this.volume = new chrome.cast.Volume(status.volume.level, status.volume.muted);
+        // this.metadata =
+        this.playbackRate = status.playbackRate;
+        this.playerState = status.playerState;
+        this.repeatMode = status.repeatMode;
+        // currentTime, volume, metadata, playbackRate, playerState, customData
+
+        this._updateHooks.forEach((hookFn) => hookFn());
+      }
+    });
+
+    this._updateHooks = [];
   }
 
   addUpdateListener(listener) {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#addUpdateListener
-    console.info('addUpdateListener', listener);
+    // console.info('addUpdateListener', listener);
+    this._updateHooks.push(listener);
   }
 
   editTracksInfo(editTracksInfoRequest, successCallback, errorCallback) {
