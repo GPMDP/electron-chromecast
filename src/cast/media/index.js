@@ -36,10 +36,10 @@ export default class MediaStatic {
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media#.MediaCommand
   static MediaCommand = {
-    PAUSE: 'PAUSE',
-    SEEK: 'SEEK',
-    STREAM_VOLUME: 'STREAM_VOLUME',
-    STREAM_MUTE: 'STREAM_MUTE',
+    PAUSE: 'pause',
+    SEEK: 'seek',
+    STREAM_VOLUME: 'stream_volume',
+    STREAM_MUTE: 'stream_mute',
   };
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media#.MetadataType

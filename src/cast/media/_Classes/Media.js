@@ -45,6 +45,16 @@ export default class Media {
     this._updateHooks = [];
   }
 
+  _sendMediaMessage(message, successCallback, errorCallback) {
+    message.mediaSessionId  = this.mediaSessionId; // eslint-disable-line
+    message.requestId = 0; // eslint-disable-line
+    message.sessionId = this.sessionId; // eslint-disable-line
+    message.customData = null; // eslint-disable-line
+    this.channel.send(message);
+    console.info(message);
+    successCallback();
+  }
+
   addUpdateListener(listener) {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#addUpdateListener
     // console.info('addUpdateListener', listener);
@@ -68,11 +78,12 @@ export default class Media {
 
   pause(pauseRequest, successCallback, errorCallback) {
     console.info('pause', pauseRequest);
+    this._sendMediaMessage({ type: 'PAUSE' }, successCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#pause
   }
 
   play(playRequest, successCallback, errorCallback) {
-    console.info('play', playRequest);
+    this._sendMediaMessage({ type: 'PLAY' }, successCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#play
   }
 
@@ -142,7 +153,7 @@ export default class Media {
   }
 
   stop(stopRequest, successCallback, errorCallback) {
-    console.info('stop', stopRequest);
+    this._sendMediaMessage({ type: 'STOP' }, successCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#stop
   }
 

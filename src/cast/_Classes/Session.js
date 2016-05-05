@@ -18,6 +18,12 @@ export default class Session {
 
       // establish virtual connection to the receiver
       this.clientConnection.send({ type: 'CONNECT' });
+      window.addEventListener('beforeunload', () => {
+        this.clientConnection.send({ type: 'CLOSE' });
+        if (this.transportConnect) {
+          this.transportConnect.send({ type: 'CLOSE' });
+        }
+      });
 
       // start heartbeating
       this.clientHeartbeat.send({ type: 'PING' });
