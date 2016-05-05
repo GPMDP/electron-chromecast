@@ -28,7 +28,9 @@ let receiverList = [];
 const sessions = [];
 
 browser.on('serviceUp', (service) => {
-  receiverList.push(service);
+  const receiver = new chrome.cast.Receiver(service.fullname, service.name);
+  receiver.ipAddress = service.addresses[0];
+  receiverList.push(receiver);
   /**
   Service object
   {
@@ -48,8 +50,13 @@ browser.on('serviceUp', (service) => {
 });
 
 browser.on('serviceDown', (service) => {
+  const downReceiver = new chrome.cast.Receiver(service.fullname, service.name);
+  downReceiver.ipAddress = service.addresses[0];
+
   receiverList = receiverList.filter((receiver) =>
-    receiver.host !== service.host && receiver.name !== service.name && receiver.port !== service.port
+    receiver.ipAddress !== downReceiver.ipAddress &&
+    receiver.name !== downReceiver.name &&
+    receiver.friendlyName !== downReceiver.friendlyName
   );
   // DEV: If we have run out of receivers, notify listeners that there are none available
   if (receiverList.length === 0) globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.UNAVAILABLE);
@@ -179,9 +186,8 @@ export default class Cast {
           const session = new chrome.cast.Session(
             id,
             globalApiConfig.sessionRequest.appId,
-            chosenDevice.name,
+            chosenDevice.friendlyName,
             [],
-            new chrome.cast.Receiver(chosenDevice.fullname, chosenDevice.name),
             chosenDevice,
             successCallback
           );
@@ -189,7 +195,6 @@ export default class Cast {
         })
         .catch(() => errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.CANCEL)));
     }
-    // TODO: Figure out where appImages and displayName come from (I think they come from the actual service)
   }
 
   static requestSessionById = (sessionId) => {

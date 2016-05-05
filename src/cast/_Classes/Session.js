@@ -2,10 +2,10 @@
 import { Client } from 'castv2';
 
 export default class Session {
-  constructor(sessionId, appId, displayName, appImages, receiver, _host, _cb) {
+  constructor(sessionId, appId, displayName, appImages, receiver, _cb) {
     this.client = new Client();
     this.client.on('message', console.warn.bind(console));
-    this.client.connect(_host, () => {
+    this.client.connect(receiver.ipAddress, () => {
       // create various namespace handlers
       const clientConnection = this.client.createChannel('sender-0', 'receiver-0', 'urn:x-cast:com.google.cast.tp.connection', 'JSON');
       const clientHeartbeat = this.client.createChannel('sender-0', 'receiver-0', 'urn:x-cast:com.google.cast.tp.heartbeat', 'JSON');
@@ -103,7 +103,7 @@ export default class Session {
   }
 
   loadMedia(loadRequest, successCallback, errorCallback) {
-    console.info('load', loadRequest);
+    console.info('loadMedia', loadRequest);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#loadMedia
   }
 
