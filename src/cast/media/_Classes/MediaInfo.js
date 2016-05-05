@@ -2,7 +2,7 @@
 
 export default class MediaInfo {
   constructor(contentId, contentType) {
-    console.info('new MediaInfo', contentId, contentType);
+    castConsole.info('new MediaInfo', contentId, contentType);
     this.contentId = contentId;
     this.contentType = contentType;
     this.customData = {};

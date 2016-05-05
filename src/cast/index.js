@@ -143,7 +143,7 @@ export default class Cast {
 
   static addReceiverActionListener = (listener) => {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.html#.addReceiverActionListener
-    console.log(listener);
+    castConsole.log(listener);
   }
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.initialize
@@ -166,12 +166,12 @@ export default class Cast {
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.logMessage
   static logMessage = (message) => {
-    console.info('CAST MSG:', message); // eslint-disable-line
+    castConsole.info('CAST MSG:', message); // eslint-disable-line
   }
 
   static removeReceiverActionListener = (listener) => {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.removeReceiverActionListener
-    console.log(listener);
+    castConsole.log(listener);
   }
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.requestSession
@@ -199,17 +199,17 @@ export default class Cast {
 
   static requestSessionById = (sessionId) => {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.requestSessionById
-    console.log('Get Session', sessionId);
+    castConsole.log('Get Session', sessionId);
   }
 
   static setCustomReceivers = (receivers, successCallback, errorCallback) => {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.setCustomReceivers
-    console.log(receivers, successCallback, errorCallback);
+    castConsole.log(receivers, successCallback, errorCallback);
   }
 
   static setReceiverDisplayStatus = (receiver, successCallback, errorCallback) => {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.setReceiverDisplayStatus
-    console.log(receiver, successCallback, errorCallback);
+    castConsole.log(receiver, successCallback, errorCallback);
   }
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.unescape

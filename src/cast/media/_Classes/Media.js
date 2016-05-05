@@ -27,7 +27,7 @@ export default class Media {
     this.channel = _channel;
     this.channel.on('message', (data) => {
       if (data && data.type === 'MEDIA_STATUS' && data.status && data.status.length > 0) {
-        console.error('Update MEDIA based on:', data);
+        castConsole.error('Update MEDIA based on:', data);
         const status = data.status[0];
         this.currentTime = status.currentTime;
         this.customData = status.customData;
@@ -51,33 +51,33 @@ export default class Media {
     message.sessionId = this.sessionId; // eslint-disable-line
     message.customData = null; // eslint-disable-line
     this.channel.send(message);
-    console.info(message);
+    castConsole.info(message);
     successCallback();
   }
 
   addUpdateListener(listener) {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#addUpdateListener
-    // console.info('addUpdateListener', listener);
+    // castConsole.info('addUpdateListener', listener);
     this._updateHooks.push(listener);
   }
 
   editTracksInfo(editTracksInfoRequest, successCallback, errorCallback) {
-    console.info('editTracksInfoRequest', editTracksInfoRequest);
+    castConsole.info('editTracksInfoRequest', editTracksInfoRequest);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#editTracksInfo
   }
 
   getEstimatedTime() {
-    console.info('getEstimatedTime');
+    castConsole.info('getEstimatedTime');
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#getEstimatedTime
   }
 
   getStatus(getStatusRequest, successCallback, errorCallback) {
-    console.info('getStatusRequest', getStatusRequest);
+    castConsole.info('getStatusRequest', getStatusRequest);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#getStatus
   }
 
   pause(pauseRequest, successCallback, errorCallback) {
-    console.info('pause', pauseRequest);
+    castConsole.info('pause', pauseRequest);
     this._sendMediaMessage({ type: 'PAUSE' }, successCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#pause
   }
@@ -88,67 +88,67 @@ export default class Media {
   }
 
   queueAppendItem(item, successCallback, errorCallback) {
-    console.info('queueAppendItem', item);
+    castConsole.info('queueAppendItem', item);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueAppendItem
   }
 
   queueInsertItems(queueInsertItemsRequest, successCallback, errorCallback) {
-    console.info('queueInsertItems', queueInsertItemsRequest);
+    castConsole.info('queueInsertItems', queueInsertItemsRequest);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueInsertItems
   }
 
   queueJumpToItem(itemId, successCallback, errorCallback) {
-    console.info('queueJumpToItem', itemId);
+    castConsole.info('queueJumpToItem', itemId);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueJumpToItem
   }
 
   queueMoveItemToNewIndex(itemId, newIndex, successCallback, errorCallback) {
-    console.info('queueMoveItemToNewIndex', itemId, newIndex);
+    castConsole.info('queueMoveItemToNewIndex', itemId, newIndex);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueMoveItemToNewIndex
   }
 
   queueNext(successCallback, errorCallback) {
-    console.info('queuenext', successCallback);
+    castConsole.info('queuenext', successCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueNext
   }
 
   queuePrev(successCallback, errorCallback) {
-    console.info('queuePrev', successCallback);
+    castConsole.info('queuePrev', successCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queuePrev
   }
 
   queueRemoveItem(itemId, successCallback, errorCallback) {
-    console.info('queueRemoveItem', itemId);
+    castConsole.info('queueRemoveItem', itemId);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueRemoveItem
   }
 
   queueReorderItems(queueReorderItemsRequest, successCallback, errorCallback) {
-    console.info('queueReorderItems', queueReorderItemsRequest);
+    castConsole.info('queueReorderItems', queueReorderItemsRequest);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueReorderItems
   }
 
   queueSetRepeatMode(repeatMode, successCallback, errorCallback) {
-    console.info('queueSetRepeatMode', repeatMode);
+    castConsole.info('queueSetRepeatMode', repeatMode);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueSetRepeatMode
   }
 
   queueUpdateItems(queueUpdateItemsRequest, successCallback, errorCallback) {
-    console.info('queueUpdateItems', queueUpdateItemsRequest);
+    castConsole.info('queueUpdateItems', queueUpdateItemsRequest);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueUpdateItems
   }
 
   removeUpdateListener(listener) {
-    console.info('removeUpdateListener', listener);
+    castConsole.info('removeUpdateListener', listener);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#removeUpdateListener
   }
 
   seek(seekRequest, successCallback, errorCallback) {
-    console.info('seekRequest', seekRequest);
+    castConsole.info('seekRequest', seekRequest);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#seek
   }
 
   setVolume(volumeRequest, successCallback, errorCallback) {
-    console.info('setVolume', setVolume);
+    castConsole.info('setVolume', setVolume);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#setVolume
   }
 
@@ -158,7 +158,7 @@ export default class Media {
   }
 
   supportsCommand(command) {
-    console.info('supportsCommand', command);
+    castConsole.info('supportsCommand', command);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#supportsCommand
   }
 }

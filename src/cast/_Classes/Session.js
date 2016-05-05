@@ -8,7 +8,7 @@ export default class Session {
     this.clientReceiver = null;
 
     this.client = new Client();
-    this.client.on('message', console.warn.bind(console));
+    this.client.on('message', castConsole.warn.bind(castConsole));
     this.client.connect(receiver.ipAddress, () => {
       let transportHeartbeat;
       // create various namespace handlers
@@ -35,7 +35,7 @@ export default class Session {
       }, 5000);
 
       // launch appId
-      console.info(`LAUNCHING: ${appId}`);
+      castConsole.info(`LAUNCHING: ${appId}`);
       this.clientReceiver.send({ type: 'LAUNCH', appId, requestId: 1 });
 
       // display receiver status updates
@@ -62,8 +62,8 @@ export default class Session {
               // TODO: Move somewhere nicer
               this.addMessageListener('urn:x-cast:com.google.cast.media', (namespace, media) => {
                 if (media.status && media.status.length > 0) {
-                  console.info('Media Reciever', media);
-                  console.error('Media Reciever', this._mediaHooks);
+                  castConsole.info('Media Reciever', media);
+                  castConsole.error('Media Reciever', this._mediaHooks);
                   // const mediaObject = new chrome.cast.media.Media(this.app.sessionId, media.requestId);
                   // this._mediaHooks.forEach((hookFn) => hookFn(mediaObject));
                 }
@@ -78,13 +78,13 @@ export default class Session {
           if (data.status.volume) {
             this.receiver.volume = new chrome.cast.Volume(data.status.volume.level, data.status.volume.muted);
           }
-          console.info('Firing Update Hooks');
+          castConsole.info('Firing Update Hooks');
           this._updateHooks.forEach((hook) => {
             hook();
           });
-          console.log('Reciever Update:', data.status);
+          castConsole.log('Reciever Update:', data.status);
         } else {
-          console.info('RANDOM MSG', data);
+          castConsole.info('RANDOM MSG', data);
         }
       });
     });
@@ -112,13 +112,13 @@ export default class Session {
     if (!this._channels[namespace]) {
       this._channels[namespace] = this.client.createChannel(this.clientId, this.transport, namespace, 'JSON');
       this._channels[namespace].on('message', (message) => {
-        console.info('Message on:', namespace, message);
+        castConsole.info('Message on:', namespace, message);
       });
     }
   }
 
   addMediaListener(listener) {
-    console.info('Media Listener: ', listener);
+    castConsole.info('Media Listener: ', listener);
     this._mediaHooks.push(listener);
   }
 
@@ -127,16 +127,16 @@ export default class Session {
     this._channels[namespace].on('message', (data) => {
       listener(namespace, JSON.stringify(data));
     });
-    console.info('Message Hook For: ', namespace);
+    castConsole.info('Message Hook For: ', namespace);
   }
 
   addUpdateListener(listener) {
     this._updateHooks.push(listener);
-    console.info('Update listener', listener);
+    castConsole.info('Update listener', listener);
   }
 
   leave(successCallback, errorCallback) {
-    console.info('leave');
+    castConsole.info('leave');
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#leave
   }
 
@@ -152,11 +152,11 @@ export default class Session {
       repeatMode: 'REPEAT_OFF',
     });
     let once = true;
-    console.error('ADD LISTEN');
+    castConsole.error('ADD LISTEN');
     this.addMessageListener('urn:x-cast:com.google.cast.media', (namespace, data) => {
       const mediaObject = JSON.parse(data);
       if (once && mediaObject.status && mediaObject.status.length > 0) {
-        console.error('LISTEN FIRED');
+        castConsole.error('LISTEN FIRED');
         once = false;
         const media = new chrome.cast.media.Media(this.app.sessionId, mediaObject.status[0].mediaSessionId, this._channels['urn:x-cast:com.google.cast.media']);
         successCallback(media);
@@ -166,23 +166,23 @@ export default class Session {
   }
 
   queueLoad(queueLoadRequest, successCallback, errorCallback) {
-    console.info('Queue Load', queueLoadRequest);
+    castConsole.info('Queue Load', queueLoadRequest);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#queueLoad
   }
 
   removeMediaListener(listener) {
-    console.info('Remove Media Listener');
+    castConsole.info('Remove Media Listener');
     this._mediaHooks = this._mediaHooks.filter((item) => item !== listener);
   }
 
   removeMessageListener(namespace, listener) {
-    console.info('Remove Message Listener');
+    castConsole.info('Remove Message Listener');
     if (!this._messageHooks[namespace]) return;
     this._messageHooks[namespace] = this._messageHooks[namespace].filter((item) => item !== listener);
   }
 
   removeUpdateListener(listener) {
-    console.info('Remove Update Listener');
+    castConsole.info('Remove Update Listener');
     this._updateHooks = this._updateHooks.filter((item) => item !== listener);
   }
 
@@ -192,7 +192,7 @@ export default class Session {
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#sendMessage
   sendMessage(namespace, message, successCallback, errorCallback) {
-    console.info('Sending Message', namespace, message);
+    castConsole.info('Sending Message', namespace, message);
     this._createChannel(namespace);
     try {
       // this._channels[namespace].send({
