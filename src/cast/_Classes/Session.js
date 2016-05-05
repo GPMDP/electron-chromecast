@@ -196,6 +196,10 @@ export default class Session {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#setReceiverMuted
   }
 
+  setReceiverVolumeLevel(newLevel, successCallback, errorCallback) {
+    // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#setReceiverVolumeLevel
+  }
+
   stop(successCallback, errorCallback) {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#stop
   }
