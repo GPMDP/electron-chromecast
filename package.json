@@ -3,6 +3,10 @@
   "version": "1.0.3",
   "description": "An implementation of the chrome.cast API in electron",
   "main": "build/index.js",
+  "contributors": [{
+    "name": "Jesse Ostrander",
+    "email": "jesse.ostrander@gmail.com"
+  }],
   "dependencies": {
     "castv2": "^0.1.6",
     "mdns": "^2.3.2"
