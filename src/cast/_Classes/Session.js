@@ -12,9 +12,24 @@ export default class Session {
     this.client.connect(receiver.ipAddress, () => {
       let transportHeartbeat;
       // create various namespace handlers
-      this.clientConnection = this.client.createChannel('sender-0', 'receiver-0', 'urn:x-cast:com.google.cast.tp.connection', 'JSON');
-      this.clientHeartbeat = this.client.createChannel('sender-0', 'receiver-0', 'urn:x-cast:com.google.cast.tp.heartbeat', 'JSON');
-      this.clientReceiver = this.client.createChannel('sender-0', 'receiver-0', 'urn:x-cast:com.google.cast.receiver', 'JSON');
+      this.clientConnection = this.client.createChannel(
+        'sender-0',
+        'receiver-0',
+        'urn:x-cast:com.google.cast.tp.connection',
+        'JSON'
+      );
+      this.clientHeartbeat = this.client.createChannel(
+        'sender-0',
+        'receiver-0',
+        'urn:x-cast:com.google.cast.tp.heartbeat',
+        'JSON'
+      );
+      this.clientReceiver = this.client.createChannel(
+        'sender-0',
+        'receiver-0',
+        'urn:x-cast:com.google.cast.receiver',
+        'JSON'
+      );
 
       // establish virtual connection to the receiver
       this.clientConnection.send({ type: 'CONNECT' });
@@ -40,7 +55,8 @@ export default class Session {
 
       // display receiver status updates
       let once = true;
-      this.clientReceiver.on('message', (data, broadcast) => {
+      this.clientReceiver.on('message', (data, broadcast) => { // eslint-disable-line no-unused-vars
+        // TODO: Implement broadcast, remove disabled eslint
         if (data.type === 'RECEIVER_STATUS') {
           if (data.status.applications && data.status.applications[0].appId === appId) {
             const app = data.status.applications[0];
@@ -49,9 +65,19 @@ export default class Session {
               once = false;
               this.transport = this.transportId = app.transportId;
               this.clientId = `client-${Math.floor(Math.random() * 10e5)}`;
-              this.transportConnect = this.client.createChannel(this.clientId, this.transport, 'urn:x-cast:com.google.cast.tp.connection', 'JSON');
+              this.transportConnect = this.client.createChannel(
+                this.clientId,
+                this.transport,
+                'urn:x-cast:com.google.cast.tp.connection',
+                'JSON'
+              );
               this.transportConnect.send({ type: 'CONNECT' });
-              transportHeartbeat = this.client.createChannel(this.clientId, this.transport, 'urn:x-cast:com.google.cast.tp.heartbeat', 'JSON');
+              transportHeartbeat = this.client.createChannel(
+                this.clientId,
+                this.transport,
+                'urn:x-cast:com.google.cast.tp.heartbeat',
+                'JSON'
+              );
               this.status = chrome.cast.SessionStatus.CONNECTED;
               this.sessionId = app.sessionId;
               this.namespaces = app.namespaces;
@@ -136,7 +162,7 @@ export default class Session {
   }
 
   leave(successCallback, errorCallback) {
-    castConsole.info('leave');
+    castConsole.info('leave', errorCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#leave
   }
 
@@ -152,22 +178,28 @@ export default class Session {
       repeatMode: 'REPEAT_OFF',
     });
     let once = true;
-    castConsole.error('ADD LISTEN');
+    castConsole.info('ADD LISTEN');
     this.addMessageListener('urn:x-cast:com.google.cast.media', (namespace, data) => {
       const mediaObject = JSON.parse(data);
       if (once && mediaObject.status && mediaObject.status.length > 0) {
-        castConsole.error('LISTEN FIRED');
+        castConsole.info('LISTEN FIRED');
         once = false;
-        const media = new chrome.cast.media.Media(this.app.sessionId, mediaObject.status[0].mediaSessionId, this._channels['urn:x-cast:com.google.cast.media']);
+        const media = new chrome.cast.media.Media(
+          this.app.sessionId,
+          mediaObject.status[0].mediaSessionId,
+          this._channels['urn:x-cast:com.google.cast.media']
+        );
         successCallback(media);
+      } else {
+        errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.SESION_ERROR));
       }
     });
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#loadMedia
   }
 
   queueLoad(queueLoadRequest, successCallback, errorCallback) {
-    castConsole.info('Queue Load', queueLoadRequest);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#queueLoad
+    castConsole.info('Queue Load', queueLoadRequest, successCallback, errorCallback);
   }
 
   removeMediaListener(listener) {
@@ -215,29 +247,44 @@ export default class Session {
   }
 
   setReceiverMuted(muted, successCallback, errorCallback) {
-    const data = {
-      type: 'SET_VOLUME',
-      volume: { muted: true },
-      requestId: 0,
-    };
-    this.clientReceiver.send(data);
+    try {
+      const data = {
+        type: 'SET_VOLUME',
+        volume: { muted: true },
+        requestId: 0,
+      };
+      this.clientReceiver.send(data);
+    } catch (e) {
+      errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.SESSION_ERROR));
+    }
+    successCallback();
   }
 
   setReceiverVolumeLevel(newLevel, successCallback, errorCallback) {
-    const data = {
-      type: 'SET_VOLUME',
-      volume: { level: newLevel },
-      requestId: 0,
-    };
-    this.clientReceiver.send(data);
+    try {
+      const data = {
+        type: 'SET_VOLUME',
+        volume: { level: newLevel },
+        requestId: 0,
+      };
+      this.clientReceiver.send(data);
+    } catch (e) {
+      errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.SESSION_ERROR));
+    }
+    successCallback();
   }
 
   stop(successCallback, errorCallback) {
-    const data = {
-      type: 'STOP',
-      sessionId: this.sessionId,
-      requestId: 0,
-    };
-    this.clientReceiver.send(data);
+    try {
+      const data = {
+        type: 'STOP',
+        sessionId: this.sessionId,
+        requestId: 0,
+      };
+      this.clientReceiver.send(data);
+    } catch (e) {
+      errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.SESSION_ERROR));
+    }
+    successCallback();
   }
 }

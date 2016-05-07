@@ -174,7 +174,8 @@ export default class Cast {
   }
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.requestSession
-  static requestSession = (successCallback, errorCallback, opt_sessionRequest) => {
+  static requestSession = (successCallback, errorCallback, opt_sessionRequest) => { // eslint-disable-line
+    // TODO: Utilize passed in opt_sessionRequest if present, remove disable line
     const id = sessions.length;
 
     if (receiverList.length === 0) {

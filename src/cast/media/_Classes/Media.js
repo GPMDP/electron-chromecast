@@ -50,8 +50,13 @@ export default class Media {
     message.requestId = 0; // eslint-disable-line
     message.sessionId = this.sessionId; // eslint-disable-line
     message.customData = null; // eslint-disable-line
-    this.channel.send(message);
-    castConsole.info(message);
+    try {
+      this.channel.send(message);
+      castConsole.info(message);
+    } catch (e) {
+      castConsole.error(e);
+      errorCallback(new chrome.cast.Error(chrome.cast.ErrorStatus.SESSION_ERROR));
+    }
     successCallback();
   }
 
@@ -62,7 +67,7 @@ export default class Media {
   }
 
   editTracksInfo(editTracksInfoRequest, successCallback, errorCallback) {
-    castConsole.info('editTracksInfoRequest', editTracksInfoRequest);
+    castConsole.info('editTracksInfoRequest', editTracksInfoRequest, errorCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#editTracksInfo
   }
 
@@ -72,67 +77,67 @@ export default class Media {
   }
 
   getStatus(getStatusRequest, successCallback, errorCallback) {
-    castConsole.info('getStatusRequest', getStatusRequest);
+    castConsole.info('getStatusRequest', getStatusRequest, errorCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#getStatus
   }
 
   pause(pauseRequest, successCallback, errorCallback) {
     castConsole.info('pause', pauseRequest);
-    this._sendMediaMessage({ type: 'PAUSE' }, successCallback);
+    this._sendMediaMessage({ type: 'PAUSE' }, successCallback, errorCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#pause
   }
 
   play(playRequest, successCallback, errorCallback) {
-    this._sendMediaMessage({ type: 'PLAY' }, successCallback);
+    this._sendMediaMessage({ type: 'PLAY' }, successCallback, errorCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#play
   }
 
   queueAppendItem(item, successCallback, errorCallback) {
-    castConsole.info('queueAppendItem', item);
+    castConsole.info('queueAppendItem', item, errorCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueAppendItem
   }
 
-  queueInsertItems(queueInsertItemsRequest, successCallback, errorCallback) {
+  queueInsertItems(queueInsertItemsRequest, successCallback, errorCallback) { // eslint-disable-line no-unused-vars
     castConsole.info('queueInsertItems', queueInsertItemsRequest);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueInsertItems
   }
 
-  queueJumpToItem(itemId, successCallback, errorCallback) {
+  queueJumpToItem(itemId, successCallback, errorCallback) { // eslint-disable-line no-unused-vars
     castConsole.info('queueJumpToItem', itemId);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueJumpToItem
   }
 
-  queueMoveItemToNewIndex(itemId, newIndex, successCallback, errorCallback) {
+  queueMoveItemToNewIndex(itemId, newIndex, successCallback, errorCallback) { // eslint-disable-line no-unused-vars
     castConsole.info('queueMoveItemToNewIndex', itemId, newIndex);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueMoveItemToNewIndex
   }
 
-  queueNext(successCallback, errorCallback) {
+  queueNext(successCallback, errorCallback) { // eslint-disable-line no-unused-vars
     castConsole.info('queuenext', successCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueNext
   }
 
-  queuePrev(successCallback, errorCallback) {
+  queuePrev(successCallback, errorCallback) { // eslint-disable-line no-unused-vars
     castConsole.info('queuePrev', successCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queuePrev
   }
 
-  queueRemoveItem(itemId, successCallback, errorCallback) {
+  queueRemoveItem(itemId, successCallback, errorCallback) { // eslint-disable-line no-unused-vars
     castConsole.info('queueRemoveItem', itemId);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueRemoveItem
   }
 
-  queueReorderItems(queueReorderItemsRequest, successCallback, errorCallback) {
+  queueReorderItems(queueReorderItemsRequest, successCallback, errorCallback) { // eslint-disable-line no-unused-vars
     castConsole.info('queueReorderItems', queueReorderItemsRequest);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueReorderItems
   }
 
-  queueSetRepeatMode(repeatMode, successCallback, errorCallback) {
+  queueSetRepeatMode(repeatMode, successCallback, errorCallback) { // eslint-disable-line no-unused-vars
     castConsole.info('queueSetRepeatMode', repeatMode);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueSetRepeatMode
   }
 
-  queueUpdateItems(queueUpdateItemsRequest, successCallback, errorCallback) {
+  queueUpdateItems(queueUpdateItemsRequest, successCallback, errorCallback) { // eslint-disable-line no-unused-vars
     castConsole.info('queueUpdateItems', queueUpdateItemsRequest);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#queueUpdateItems
   }
@@ -142,18 +147,18 @@ export default class Media {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#removeUpdateListener
   }
 
-  seek(seekRequest, successCallback, errorCallback) {
+  seek(seekRequest, successCallback, errorCallback) { // eslint-disable-line no-unused-vars
     castConsole.info('seekRequest', seekRequest);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#seek
   }
 
-  setVolume(volumeRequest, successCallback, errorCallback) {
-    castConsole.info('setVolume', setVolume);
+  setVolume(volumeRequest, successCallback, errorCallback) { // eslint-disable-line no-unused-vars
+    castConsole.info('setVolume', volumeRequest);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#setVolume
   }
 
   stop(stopRequest, successCallback, errorCallback) {
-    this._sendMediaMessage({ type: 'STOP' }, successCallback);
+    this._sendMediaMessage({ type: 'STOP' }, successCallback, errorCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#stop
   }
 
