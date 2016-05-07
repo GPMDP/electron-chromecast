@@ -161,9 +161,9 @@ export default class Session {
     castConsole.info('Update listener', listener);
   }
 
-  leave(successCallback, errorCallback) {
-    castConsole.info('leave', errorCallback);
+  leave(successCallback, errorCallback) { // eslint-disable-line no-unused-vars
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#leave
+    castConsole.info('leave');
   }
 
   loadMedia(loadRequest, successCallback, errorCallback) {
@@ -197,9 +197,9 @@ export default class Session {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#loadMedia
   }
 
-  queueLoad(queueLoadRequest, successCallback, errorCallback) {
+  queueLoad(queueLoadRequest, successCallback, errorCallback) { // eslint-disable-line
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#queueLoad
-    castConsole.info('Queue Load', queueLoadRequest, successCallback, errorCallback);
+    castConsole.info('Queue Load', queueLoadRequest);
   }
 
   removeMediaListener(listener) {
