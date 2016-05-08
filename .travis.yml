@@ -1,4 +1,9 @@
+os:
+  - linux
+
 sudo: required
+dist: trusty
+
 language: node_js
 node_js:
   - "4.4"
@@ -6,15 +11,6 @@ node_js:
 before_install:
   - sudo apt-get update
   - sudo apt-get install libavahi-compat-libdnssd-dev libavahi-compat-libdnssd-dev
-  - if ["$CXX" = "g++"]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
-
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - gcc-4.8
-    - g++-4.8
 
 script:
   - npm run test
