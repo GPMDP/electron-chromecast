@@ -2,14 +2,22 @@ sudo: required
 language: node_js
 node_js:
   - "4.4"
-env:
-  - CXX=g++-4.6
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get install libavahi-compat-libdnssd-dev libavahi-compat-libdnssd-dev g++-4.6
+  - sudo apt-get install libavahi-compat-libdnssd-dev libavahi-compat-libdnssd-dev
+  - if ["$CXX" = "g++"]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-4.8
+    - g++-4.8
 
 script:
-  # DEV: Currently our test suite runs locally only
-  #   This should be resolved in #19
   - npm run test
+
+notifications:
+  email: false
