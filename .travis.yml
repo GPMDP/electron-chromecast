@@ -5,7 +5,7 @@ node_js:
 before_install:
   - sudo apt-get update
   - sudo apt-get install libavahi-compat-libdnssd-dev libavahi-compat-libdnssd-dev
-  - sudo apt-get install g++ build-essential
+  - sudo apt-get install g++-4.8 build-essential
 script:
   # DEV: Currently our test suite runs locally only
   #   This should be resolved in #19
