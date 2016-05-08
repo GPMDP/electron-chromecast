@@ -1,7 +1,9 @@
 Electron Chromecast
 ------------------
 
-[![Join the chat at https://gitter.im/GPMDP/electron-chromecast](https://badges.gitter.im/GPMDP/electron-chromecast.svg)](https://gitter.im/GPMDP/electron-chromecast?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  
+[![Join the chat at https://gitter.im/GPMDP/electron-chromecast](https://badges.gitter.im/GPMDP/electron-chromecast.svg)](https://gitter.im/GPMDP/electron-chromecast?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/GPMDP/electron-chromecast.svg?branch=master)](https://travis-ci.org/GPMDP/electron-chromecast)
+
 > An implementation of the chrome.cast API in electron
 
 ## Usage
@@ -39,7 +41,7 @@ chromecast(function (receivers) {
 // ES6
 import chromecast from 'electron-chromecast';
 
-chromecast((receivers) => 
+chromecast((receivers) =>
     new Promise((resolve, reject) => {
         // Do some logic to choose a receiver, possibly ask the user through a UI
         const chosenReceiver = receivers[0];
