@@ -10,7 +10,7 @@ node_js:
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get install libavahi-compat-libdnssd-dev libavahi-compat-libdnssd-dev
+  - sudo DEBIAN_FRONTEND=noninteractive apt-get install -y libavahi-compat-libdnssd-dev libavahi-compat-libdnssd-dev
 
 script:
   - npm run test
