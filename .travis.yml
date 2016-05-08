@@ -5,16 +5,9 @@ node_js:
 env:
   - CXX=g++-4.8
 
-addons:
-  apt:
-    source:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
-
 before_install:
   - sudo apt-get update
-  - sudo apt-get install libavahi-compat-libdnssd-dev libavahi-compat-libdnssd-dev
+  - sudo apt-get install libavahi-compat-libdnssd-dev libavahi-compat-libdnssd-dev g++-4.8
 
 script:
   # DEV: Currently our test suite runs locally only
