@@ -3,11 +3,11 @@ language: node_js
 node_js:
   - "4.4"
 env:
-  - CXX=g++-4.8
+  - CXX=g++-4.6
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get install libavahi-compat-libdnssd-dev libavahi-compat-libdnssd-dev g++-4.8
+  - sudo apt-get install libavahi-compat-libdnssd-dev libavahi-compat-libdnssd-dev g++-4.6
 
 script:
   # DEV: Currently our test suite runs locally only
