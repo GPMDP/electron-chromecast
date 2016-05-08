@@ -1,0 +1,9 @@
+sudo: false
+language: node_js
+node_js:
+  - "4.4"
+
+script:
+  # DEV: Currently our test suite runs locally only
+  #   This should be resolved in #19
+  - npm run test
