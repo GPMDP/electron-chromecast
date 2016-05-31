@@ -1,6 +1,6 @@
 {
   "name": "electron-chromecast",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "An implementation of the chrome.cast API in electron",
   "main": "build/index.js",
   "contributors": [
