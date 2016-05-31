@@ -10,17 +10,33 @@ import Volume from './_Classes/Volume';
 
 import Media from './media';
 
-import mdns from 'mdns';
+let mdns;
+try {
+  mdns = require('mdns');
+} catch (e) {
+  console.error('Failed to start chromecast browser'); // eslint-disable-line
+  mdns = null;
+}
 
+let browser;
+
+if (mdns) {
 // DEV: workaround for RPi (and apparently Ubuntu)
 // https://github.com/agnat/node_mdns/issues/130#issuecomment-120731155
 
-const sequence = [
-  mdns.rst.DNSServiceResolve(), // eslint-disable-line
-  'DNSServiceGetAddrInfo' in mdns.dns_sd ? mdns.rst.DNSServiceGetAddrInfo() : mdns.rst.getaddrinfo({ families: [0] }), // eslint-disable-line
-  mdns.rst.makeAddressesUnique(),
-];
-const browser = mdns.createBrowser(mdns.tcp('googlecast'), { resolverSequence: sequence });
+  const sequence = [
+    mdns.rst.DNSServiceResolve(), // eslint-disable-line
+    'DNSServiceGetAddrInfo' in mdns.dns_sd ? mdns.rst.DNSServiceGetAddrInfo() : mdns.rst.getaddrinfo({ families: [0] }), // eslint-disable-line
+    mdns.rst.makeAddressesUnique(),
+  ];
+  browser = mdns.createBrowser(mdns.tcp('googlecast'), { resolverSequence: sequence });
+  browser.on('error', () => {});
+} else {
+  browser = {
+    on: () => {},
+    start: () => {},
+  };
+}
 
 // DEV: Global config variables
 let globalApiConfig;
