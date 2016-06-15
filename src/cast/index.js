@@ -18,7 +18,10 @@ try {
   mdns = null;
 }
 
-let browser;
+let browser = {
+  on: () => {},
+  start: () => {},
+};
 
 if (mdns) {
 // DEV: workaround for RPi (and apparently Ubuntu)
@@ -29,13 +32,12 @@ if (mdns) {
     'DNSServiceGetAddrInfo' in mdns.dns_sd ? mdns.rst.DNSServiceGetAddrInfo() : mdns.rst.getaddrinfo({ families: [0] }), // eslint-disable-line
     mdns.rst.makeAddressesUnique(),
   ];
-  browser = mdns.createBrowser(mdns.tcp('googlecast'), { resolverSequence: sequence });
-  browser.on('error', () => {});
-} else {
-  browser = {
-    on: () => {},
-    start: () => {},
-  };
+  try {
+    browser = mdns.createBrowser(mdns.tcp('googlecast'), { resolverSequence: sequence });
+    browser.on('error', () => {});
+  } catch (err) {
+    // Who cares
+  }
 }
 
 // DEV: Global config variables
