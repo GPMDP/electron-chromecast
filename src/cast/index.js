@@ -211,7 +211,12 @@ export default class Cast {
           );
           sessions.push(session);
         })
-        .catch(() => errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.CANCEL)));
+        .catch((message) => {
+          if (message === Cast.ReceiverAction.STOP && sessions.length) {
+            sessions[sessions.length - 1].stop();
+          }
+          return errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.CANCEL));
+        });
     }
   }
 
