@@ -201,15 +201,26 @@ export default class Cast {
     } else {
       global.requestHandler(receiverList)
         .then((chosenDevice) => {
-          const session = new chrome.cast.Session(
-            id,
-            globalApiConfig.sessionRequest.appId,
-            chosenDevice.friendlyName,
-            [],
-            chosenDevice,
-            successCallback
-          );
-          sessions.push(session);
+          const createSession = () => {
+            const session = new chrome.cast.Session(
+              id,
+              globalApiConfig.sessionRequest.appId,
+              chosenDevice.friendlyName,
+              [],
+              chosenDevice,
+              successCallback
+            );
+            sessions.push(session);
+          };
+          // If we already have a session, terminate the old one and then start
+          // the new one
+          if (sessions.length && sessions[sessions.length - 1].status !== chrome.cast.SessionStatus.STOPPED) {
+            sessions[sessions.length - 1].stop(() => {
+              setTimeout(createSession, 0);
+            }, () => {});
+          } else {
+            createSession();
+          }
         })
         .catch((message) => {
           if (message === Cast.ReceiverAction.STOP && sessions.length) {
