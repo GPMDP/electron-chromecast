@@ -213,7 +213,7 @@ export default class Cast {
         })
         .catch((message) => {
           if (message === Cast.ReceiverAction.STOP && sessions.length) {
-            sessions[sessions.length - 1].stop();
+            sessions[sessions.length - 1].stop(() => {}, () => {});
           }
           return errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.CANCEL));
         });

@@ -42,7 +42,7 @@ export default class Session {
 
       // start heartbeating
       this.clientHeartbeat.send({ type: 'PING' });
-      setInterval(() => {
+      this.clientHeartbeatInterval = setInterval(() => {
         if (transportHeartbeat) {
           transportHeartbeat.send({ type: 'PING' });
         }
@@ -285,6 +285,12 @@ export default class Session {
     } catch (e) {
       errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.SESSION_ERROR));
     }
+    this.status = chrome.cast.SessionStatus.STOPPED;
+    this.client.close();
+    clearInterval(this.clientHeartbeatInterval);
+    this._updateHooks.forEach((hook) => {
+      hook();
+    });
     successCallback();
   }
 }
