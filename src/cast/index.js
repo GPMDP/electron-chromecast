@@ -46,7 +46,7 @@ let receiverList = [];
 const sessions = [];
 
 browser.on('serviceUp', (service) => {
-  const receiver = new chrome.cast.Receiver(service.fullname, service.name);
+  const receiver = new chrome.cast.Receiver(service.txtRecord.id, service.name);
   receiver.ipAddress = service.addresses[0];
   receiverList.push(receiver);
   /**
