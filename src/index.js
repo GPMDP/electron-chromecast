@@ -10,19 +10,19 @@ global.requestHandler = (receiverList) =>
 global.castConsole = {
   log: (...args) => {
     if (!global.castDevMode) return;
-    castConsole.log(...args); // eslint-disable-line
+    console.log(...args); // eslint-disable-line
   },
   info: (...args) => {
     if (!global.castDevMode) return;
-    castConsole.info(...args); // eslint-disable-line
+    console.info(...args); // eslint-disable-line
   },
   warn: (...args) => {
     if (!global.castDevMode) return;
-    castConsole.warn(...args); // eslint-disable-line
+    console.warn(...args); // eslint-disable-line
   },
   error: (...args) => {
     if (!global.castDevMode) return;
-    castConsole.error(...args); // eslint-disable-line
+    console.error(...args); // eslint-disable-line
   },
 };
 
