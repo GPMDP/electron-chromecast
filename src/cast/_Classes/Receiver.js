@@ -5,7 +5,7 @@ export default class Receiver {
     this.capabilities = opt_capabilities || [chrome.cast.Capability.VIDEO_OUT, chrome.cast.Capability.AUDIO_OUT];
     this.displayStatus = null;
     this.friendlyName = friendlyName;
-    this.label = 'rENwhtXTIxoASoh7UJVV7twdiEEo';
+    this.label = label;
     this.volume = opt_volume;
 
     this.receiverType = chrome.cast.ReceiverType.CAST;
