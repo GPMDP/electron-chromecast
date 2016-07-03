@@ -57,7 +57,6 @@ export default class Session {
       let once = true;
       this.clientReceiver.on('message', (data, broadcast) => { // eslint-disable-line no-unused-vars
         // TODO: Implement broadcast, remove disabled eslint
-        console.info(data);
         if (data.type === 'RECEIVER_STATUS') {
           if (data.status.applications && data.status.applications[0].appId !== appId) {
             this.status = chrome.cast.SessionStatus.STOPPED;
