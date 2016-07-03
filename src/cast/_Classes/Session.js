@@ -189,6 +189,7 @@ export default class Session {
           mediaObject.status[0].mediaSessionId,
           this._channels['urn:x-cast:com.google.cast.media']
         );
+        this.media = media;
         successCallback(media);
       } else {
         errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.SESION_ERROR));

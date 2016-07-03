@@ -32,7 +32,9 @@ export default class Media {
         this.currentTime = status.currentTime;
         this.customData = status.customData;
         this.volume = new chrome.cast.Volume(status.volume.level, status.volume.muted);
-        // this.metadata =
+        if (status.media) {
+          this.media = status.media;
+        }
         this.playbackRate = status.playbackRate;
         this.playerState = status.playerState;
         this.repeatMode = status.repeatMode;
@@ -148,7 +150,7 @@ export default class Media {
   }
 
   seek(seekRequest, successCallback, errorCallback) { // eslint-disable-line no-unused-vars
-    castConsole.info('seekRequest', seekRequest);
+    this._sendMediaMessage({ type: 'SEEK', currentTime: seekRequest.currentTime }, successCallback, errorCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#seek
   }
 
