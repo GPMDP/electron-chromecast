@@ -1,6 +1,7 @@
 import ApiConfig from './_Classes/ApiConfig';
 import Error from './_Classes/Error';
 import Image from './_Classes/Image';
+import Mdns from 'node-mdns-easy';
 import Receiver from './_Classes/Receiver';
 import ReceiverDisplayStatus from './_Classes/ReceiverDisplayStatus';
 import SenderApplication from './_Classes/SenderApplication';
@@ -10,40 +11,13 @@ import Volume from './_Classes/Volume';
 
 import Media from './media';
 
-let mdns;
-try {
-  mdns = require('mdns');
-} catch (e) {
-  console.error('Failed to start chromecast browser'); // eslint-disable-line
-  mdns = null;
-}
-
-let browser = {
-  on: () => {},
-  start: () => {},
-};
-
-if (mdns) {
-// DEV: workaround for RPi (and apparently Ubuntu)
-// https://github.com/agnat/node_mdns/issues/130#issuecomment-120731155
-
-  const sequence = [
-    mdns.rst.DNSServiceResolve(), // eslint-disable-line
-    'DNSServiceGetAddrInfo' in mdns.dns_sd ? mdns.rst.DNSServiceGetAddrInfo() : mdns.rst.getaddrinfo({ families: [0] }), // eslint-disable-line
-    mdns.rst.makeAddressesUnique(),
-  ];
-  try {
-    browser = mdns.createBrowser(mdns.tcp('googlecast'), { resolverSequence: sequence });
-    browser.on('error', () => {});
-  } catch (err) {
-    // Who cares
-  }
-}
+const mdns = new Mdns();
+const browser = mdns.createBrowser(mdns.getLibrary().tcp('googlecast'));
 
 // DEV: Global config variables
 let globalApiConfig;
 let receiverList = [];
-let recieverListeners = [];
+const receiverListeners = [];
 const sessions = [];
 
 browser.on('serviceUp', (service) => {
@@ -80,7 +54,7 @@ browser.on('serviceDown', (service) => {
   // DEV: If we have run out of receivers, notify listeners that there are none available
   if (receiverList.length === 0) globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.UNAVAILABLE);
 });
-browser.start();
+browser.browse();
 
 export default class Cast {
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.AutoJoinPolicy
@@ -162,7 +136,7 @@ export default class Cast {
 
   static addReceiverActionListener = (listener) => {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.html#.addReceiverActionListener
-    recieverListeners.push(listener);
+    receiverListeners.push(listener);
   }
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.initialize

@@ -11,7 +11,7 @@
   ],
   "dependencies": {
     "castv2": "^0.1.6",
-    "mdns": "^2.3.2"
+    "node-mdns-easy": "^1.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^6.0.4",
