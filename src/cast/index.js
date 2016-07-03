@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import ApiConfig from './_Classes/ApiConfig';
 import Error from './_Classes/Error';
 import Image from './_Classes/Image';
@@ -24,6 +25,7 @@ browser.on('serviceUp', (service) => {
   const receiver = new chrome.cast.Receiver(service.txtRecord.id, service.name);
   receiver.ipAddress = service.addresses[0];
   receiverList.push(receiver);
+  receiverList = _.uniqBy(receiverList, _.property('addresses[0]'));
   /**
   Service object
   {
@@ -54,7 +56,13 @@ browser.on('serviceDown', (service) => {
   // DEV: If we have run out of receivers, notify listeners that there are none available
   if (receiverList.length === 0) globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.UNAVAILABLE);
 });
-browser.browse();
+if (browser.ready) {
+  browser.browse();
+} else {
+  browser.once('ready', () => {
+    browser.browse();
+  });
+}
 
 export default class Cast {
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.AutoJoinPolicy
