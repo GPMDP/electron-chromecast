@@ -43,6 +43,7 @@ if (mdns) {
 // DEV: Global config variables
 let globalApiConfig;
 let receiverList = [];
+let recieverListeners = [];
 const sessions = [];
 
 browser.on('serviceUp', (service) => {
@@ -161,7 +162,7 @@ export default class Cast {
 
   static addReceiverActionListener = (listener) => {
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.html#.addReceiverActionListener
-    castConsole.log(listener);
+    recieverListeners.push(listener);
   }
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.initialize
