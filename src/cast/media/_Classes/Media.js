@@ -35,6 +35,9 @@ export default class Media {
         if (status.media) {
           this.media = status.media;
         }
+        if (status.mediaSessionId) {
+          this.mediaSessionId = status.mediaSessionId;
+        }
         this.playbackRate = status.playbackRate;
         this.playerState = status.playerState;
         this.repeatMode = status.repeatMode;
