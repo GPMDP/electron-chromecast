@@ -52,6 +52,10 @@ chromecast((receivers) =>
 
 The function returned from `electron-chromecast` should be called with a single parameter; a function that returns a promise that will eventually resolve with a single receiver.  This receiver is the one that will be used by `chrome.cast`.
 
+## Installation
+
+Note: Behind the scenes we use MDNS which has some [system requirements](https://github.com/agnat/node_mdns#installation), make sure your system has the required dependencies.
+
 ## TODO
 - [ ] All the TODO's in code (We only implemented the functionality required by Google Play Music, however this should be sufficient for MOST applications)
 
