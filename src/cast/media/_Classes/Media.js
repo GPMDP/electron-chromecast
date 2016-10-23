@@ -66,8 +66,7 @@ export default class Media {
   }
 
   addUpdateListener(listener) {
-    // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#addUpdateListener
-    // castConsole.info('addUpdateListener', listener);
+    // https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#addUpdateListener
     this._updateHooks.push(listener);
   }
 
@@ -77,8 +76,8 @@ export default class Media {
   }
 
   getEstimatedTime() {
-    castConsole.info('getEstimatedTime');
-    // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#getEstimatedTime
+    // https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#getEstimatedTime
+    return this.currentTime || 0;
   }
 
   getStatus(getStatusRequest, successCallback, errorCallback) {
@@ -87,14 +86,14 @@ export default class Media {
   }
 
   pause(pauseRequest, successCallback, errorCallback) {
+    // https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#pause
     castConsole.info('pause', pauseRequest);
     this._sendMediaMessage({ type: 'PAUSE' }, successCallback, errorCallback);
-    // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#pause
   }
 
   play(playRequest, successCallback, errorCallback) {
+    // https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#play
     this._sendMediaMessage({ type: 'PLAY' }, successCallback, errorCallback);
-    // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#play
   }
 
   queueAppendItem(item, successCallback, errorCallback) {
@@ -163,8 +162,8 @@ export default class Media {
   }
 
   stop(stopRequest, successCallback, errorCallback) {
+    // https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#stop
     this._sendMediaMessage({ type: 'STOP' }, successCallback, errorCallback);
-    // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#stop
   }
 
   supportsCommand(command) {
