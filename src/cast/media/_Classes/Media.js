@@ -30,6 +30,7 @@ export default class Media {
         castConsole.error('Update MEDIA based on:', data);
         const status = data.status[0];
         this.currentTime = status.currentTime;
+        this._lastCurrentTime = Date.now() / 1000
         this.customData = status.customData;
         this.volume = new chrome.cast.Volume(status.volume.level, status.volume.muted);
         if (status.media) {
@@ -77,7 +78,8 @@ export default class Media {
 
   getEstimatedTime() {
     // https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#getEstimatedTime
-    return this.currentTime || 0;
+    if (!this.currentTime) return 0;
+    return this.currentTime + ((Date.now() / 1000) - this._lastCurrentTime);
   }
 
   getStatus(getStatusRequest, successCallback, errorCallback) {
