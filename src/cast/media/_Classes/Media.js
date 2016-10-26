@@ -30,7 +30,7 @@ export default class Media {
         castConsole.error('Update MEDIA based on:', data);
         const status = data.status[0];
         this.currentTime = status.currentTime;
-        this._lastCurrentTime = Date.now() / 1000
+        this._lastCurrentTime = Date.now() / 1000;
         this.customData = status.customData;
         this.volume = new chrome.cast.Volume(status.volume.level, status.volume.muted);
         if (status.media) {
@@ -159,8 +159,8 @@ export default class Media {
   }
 
   setVolume(volumeRequest, successCallback, errorCallback) { // eslint-disable-line no-unused-vars
+    // https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#setVolume
     this._sendMediaMessage({ type: 'SET_VOLUME', volume: volumeRequest.volume }, successCallback, errorCallback);
-    // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#setVolume
   }
 
   stop(stopRequest, successCallback, errorCallback) {
