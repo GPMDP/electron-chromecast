@@ -159,7 +159,7 @@ export default class Media {
   }
 
   setVolume(volumeRequest, successCallback, errorCallback) { // eslint-disable-line no-unused-vars
-    castConsole.info('setVolume', volumeRequest);
+    this._sendMediaMessage({ type: 'SET_VOLUME', volume: volumeRequest.volume }, successCallback, errorCallback);
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#setVolume
   }
 
