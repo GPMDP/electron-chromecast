@@ -12,59 +12,12 @@ import Volume from './_Classes/Volume';
 
 import Media from './media';
 
-const mdns = new Mdns();
-const browser = mdns.createBrowser(mdns.getLibrary().tcp('googlecast'));
-
 // DEV: Global config variables
 let globalApiConfig;
+
 let receiverList = [];
 const receiverListeners = [];
 const sessions = [];
-
-browser.on('serviceUp', (service) => {
-  const receiver = new chrome.cast.Receiver(service.txtRecord.id, service.txtRecord.fn);
-
-  receiver.ipAddress = service.addresses[0];
-  receiver.service_fullname = service.fullname;
-  receiverList.push(receiver);
-  receiverList = _.uniqBy(receiverList, _.property('service_fullname'));
-  /**
-  Service object
-  {
-    interfaceIndex: 4,
-    name: 'somehost',
-    networkInterface: 'en0',
-    type: {name: 'http', protocol: 'tcp', subtypes: []},
-    replyDomain: 'local.',
-    fullname: 'somehost._http._tcp.local.',
-    host: 'somehost.local.',
-    port: 4321,
-    addresses: [ '10.1.1.50', 'fe80::21f:5bff:fecd:ce64' ]
-  }
-  **/
-  // DEV: Notify listeners that we found cast devices
-  if (globalApiConfig) globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.AVAILABLE);
-});
-
-browser.on('serviceDown', (service) => {
-  const downReceiver = new chrome.cast.Receiver(service.fullname, service.name);
-  downReceiver.ipAddress = service.addresses[0];
-
-  receiverList = receiverList.filter((receiver) =>
-    receiver.ipAddress !== downReceiver.ipAddress &&
-    receiver.name !== downReceiver.name &&
-    receiver.friendlyName !== downReceiver.friendlyName
-  );
-  // DEV: If we have run out of receivers, notify listeners that there are none available
-  if (receiverList.length === 0) globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.UNAVAILABLE);
-});
-if (browser.ready) {
-  browser.browse();
-} else {
-  browser.once('ready', () => {
-    browser.browse();
-  });
-}
 
 export default class Cast {
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.AutoJoinPolicy
@@ -233,6 +186,56 @@ export default class Cast {
 
   // https://developers.google.com/cast/docs/reference/chrome/chrome.cast#.unescape
   static unescape = (escaped) => unescape(escaped);
+
+  static scan = () => {
+    const mdns = new Mdns();
+    const browser = mdns.createBrowser(mdns.getLibrary().tcp('googlecast'));
+
+    browser.on('serviceUp', (service) => {
+      const receiver = new chrome.cast.Receiver(service.txtRecord.id, service.txtRecord.fn);
+
+      receiver.ipAddress = service.addresses[0];
+      receiver.service_fullname = service.fullname;
+      receiverList.push(receiver);
+      receiverList = _.uniqBy(receiverList, _.property('service_fullname'));
+      /**
+      Service object
+      {
+        interfaceIndex: 4,
+        name: 'somehost',
+        networkInterface: 'en0',
+        type: {name: 'http', protocol: 'tcp', subtypes: []},
+        replyDomain: 'local.',
+        fullname: 'somehost._http._tcp.local.',
+        host: 'somehost.local.',
+        port: 4321,
+        addresses: [ '10.1.1.50', 'fe80::21f:5bff:fecd:ce64' ]
+      }
+      **/
+      // DEV: Notify listeners that we found cast devices
+      if (globalApiConfig) globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.AVAILABLE);
+    });
+
+    browser.on('serviceDown', (service) => {
+      const downReceiver = new chrome.cast.Receiver(service.fullname, service.name);
+      downReceiver.ipAddress = service.addresses[0];
+
+      receiverList = receiverList.filter((receiver) =>
+        receiver.ipAddress !== downReceiver.ipAddress &&
+        receiver.name !== downReceiver.name &&
+        receiver.friendlyName !== downReceiver.friendlyName
+      );
+      // DEV: If we have run out of receivers, notify listeners that there are none available
+      if (receiverList.length === 0) globalApiConfig.receiverListener(chrome.cast.ReceiverAvailability.UNAVAILABLE);
+    });
+    if (browser.ready) {
+      browser.browse();
+    } else {
+      browser.once('ready', () => {
+        browser.browse();
+      });
+    }
+  }
 }
 
 // Static Classes
