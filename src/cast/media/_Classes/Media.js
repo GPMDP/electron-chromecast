@@ -84,7 +84,7 @@ export default class Media {
 
   getStatus(getStatusRequest, successCallback, errorCallback) {
     castConsole.info('getStatusRequest', getStatusRequest, errorCallback);
-    // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.media.Media#getStatus
+    this._sendMediaMessage({ type: 'MEDIA_GET_STATUS' }, successCallback, errorCallback);
   }
 
   pause(pauseRequest, successCallback, errorCallback) {
