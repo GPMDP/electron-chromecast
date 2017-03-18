@@ -9,7 +9,10 @@ export default class Session {
 
     this.client = new Client();
     this.client.on('message', castConsole.warn.bind(castConsole));
-    this.client.connect(receiver.ipAddress, () => {
+    this.client.connect({
+      host: receiver.ipAddress,
+      port: receiver.port,
+    }, () => {
       let transportHeartbeat;
       // create various namespace handlers
       this.clientConnection = this.client.createChannel(

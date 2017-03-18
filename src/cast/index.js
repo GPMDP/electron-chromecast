@@ -26,6 +26,7 @@ browser.on('serviceUp', (service) => {
 
   receiver.ipAddress = service.addresses[0];
   receiver.service_fullname = service.fullname;
+  receiver.port = service.port;
   receiverList.push(receiver);
   receiverList = _.uniqBy(receiverList, _.property('service_fullname'));
   /**
