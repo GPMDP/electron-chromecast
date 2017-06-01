@@ -41,13 +41,11 @@ chromecast(function (receivers) {
 // ES6
 import chromecast from 'electron-chromecast';
 
-chromecast((receivers) =>
-    new Promise((resolve, reject) => {
-        // Do some logic to choose a receiver, possibly ask the user through a UI
-        const chosenReceiver = receivers[0];
-        resolve(chosenReceiver);
-    });
-);
+chromecast(async (receivers) => {
+    // Do some logic to choose a receiver, possibly ask the user through a UI
+    const chosenReceiver = receivers[0];
+    return chosenReceiver;
+});
 ```
 
 The function returned from `electron-chromecast` should be called with a single parameter; a function that returns a promise that will eventually resolve with a single receiver.  This receiver is the one that will be used by `chrome.cast`.
