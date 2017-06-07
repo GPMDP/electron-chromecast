@@ -190,18 +190,20 @@ export default class Session {
     castConsole.info('ADD LISTEN');
     this.addMessageListener('urn:x-cast:com.google.cast.media', (namespace, data) => {
       const mediaObject = JSON.parse(data);
-      if (once && mediaObject.status && mediaObject.status.length > 0) {
-        castConsole.info('LISTEN FIRED');
-        once = false;
-        const media = new chrome.cast.media.Media(
-          this.app.sessionId,
-          mediaObject.status[0].mediaSessionId,
-          this._channels['urn:x-cast:com.google.cast.media']
-        );
-        this.media = media;
-        successCallback(media);
-      } else {
-        errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.SESION_ERROR));
+      if (once) {
+        if (mediaObject.status && mediaObject.status.length > 0) {
+          castConsole.info('LISTEN FIRED');
+          once = false;
+          const media = new chrome.cast.media.Media(
+            this.app.sessionId,
+            mediaObject.status[0].mediaSessionId,
+            this._channels['urn:x-cast:com.google.cast.media']
+          );
+          this.media = media;
+          successCallback(media);
+        } else {
+          errorCallback(new chrome.cast.Error(chrome.cast.ErrorCode.SESSION_ERROR));
+        }
       }
     });
     // TODO: https://developers.google.com/cast/docs/reference/chrome/chrome.cast.Session#loadMedia
